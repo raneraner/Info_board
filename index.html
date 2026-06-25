@@ -9,187 +9,226 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
-        /* משתני צבע לתחלופה חלקה בין יום ללילה */
+        /* הנדסת משתנים - מעבר חלק בין יום ללילה */
         :root {
-            --bg-color: #000000;
-            --text-primary: #00E5FF;
-            --text-secondary: #0088A3;
-            --border-color: #004455;
-            --panel-bg: transparent;
-            --event-time-color: #FFEB3B;
-            --timer-gradient: -webkit-linear-gradient(45deg, #FFEB3B, #00E5FF);
+            /* מצב לילה (ברירת מחדל) */
+            --bg-gradient: linear-gradient(135deg, #0d0d0f 0%, #1a1a24 100%);
+            --glass-bg: rgba(30, 30, 35, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --text-accent: #0a84ff;
+            
+            --divider-color: rgba(255, 255, 255, 0.1);
+            --timer-gradient: -webkit-linear-gradient(45deg, #FFD60A, #0a84ff);
         }
 
         body.light-mode {
-            --bg-color: #f5f5f7;
-            --text-primary: #1d1d1f;
-            --text-secondary: #515154;
-            --border-color: #d2d2d7;
-            --panel-bg: #ffffff;
-            --event-time-color: #0066cc;
-            --timer-gradient: -webkit-linear-gradient(45deg, #ff7700, #0066cc);
+            /* מצב יום */
+            --bg-gradient: linear-gradient(135deg, #e5e5ea 0%, #f2f2f7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+            
+            --text-primary: #1c1c1e;
+            --text-secondary: #8e8e93;
+            --text-accent: #007aff;
+            
+            --divider-color: rgba(0, 0, 0, 0.1);
+            --timer-gradient: -webkit-linear-gradient(45deg, #ff9500, #007aff);
         }
 
         body { 
-            background-color: var(--bg-color); 
+            background: var(--bg-gradient);
             color: var(--text-primary); 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             text-align: center; 
-            padding-top: 2%; 
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
             overflow: hidden; 
             direction: rtl;
-            transition: background-color 1s ease, color 1s ease;
-            margin: 0;
+            transition: background 1.5s ease, color 1.5s ease;
         }
 
-        #dashboard-grid {
-            width: 96%;
+        /* רשת האריחים - Bento Grid */
+        #bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 20px;
+            height: 100%;
+            max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch;
         }
 
-        .panel {
-            width: 48%;
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* עיצוב כרטיסי הזכוכית - Glassmorphism */
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            box-shadow: var(--glass-shadow);
+            padding: 24px;
             box-sizing: border-box;
-            padding: 20px 25px;
-            background-color: var(--panel-bg);
-            border-radius: 18px;
-            border: 2px dashed var(--border-color);
-            transition: background-color 1s ease, border-color 1s ease;
-        }
-
-        #left-panel {
+            transition: background 1.5s ease, border 1.5s ease, box-shadow 1.5s ease;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
         }
 
-        #right-panel {
+        /* טיפוגרפיה */
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
             text-align: right;
-            display: flex;
-            flex-direction: column;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        #bottom-panel {
-            clear: both;
-            width: 100%;
-            padding-top: 35px;
-        }
+        /* אזור הזמן */
+        #clock { font-size: 96px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -2px;}
+        #date { font-size: 24px; font-weight: 400; color: var(--text-secondary); margin-top: 8px;}
 
-        .section-title { font-size: 26px; color: var(--text-secondary); margin-bottom: 12px; font-weight: bold; }
-        .sub-title { font-size: 20px; color: var(--text-primary); margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
+        /* אזור אקלים */
+        #temp { font-size: 82px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1;}
+        .weather-metrics { display: flex; justify-content: space-around; margin-top: 20px; border-top: 1px solid var(--divider-color); padding-top: 20px;}
+        .metric-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 20px; font-weight: 500;}
+        .metric-label { font-size: 14px; color: var(--text-secondary); font-weight: 400;}
 
-        #clock { font-size: 90px; margin-bottom: 0; line-height: 90px; font-family: monospace; font-weight: bold;}
-        #date { font-size: 28px; color: var(--text-secondary); margin-top: 5px; margin-bottom: 30px; font-weight: 500;}
+        #sunset-icon { stroke: var(--text-primary); transition: stroke 1.5s ease;}
 
-        #temp { font-size: 75px; font-weight: bold; margin-bottom: 10px; font-family: monospace;}
-        #uv-info, #sunset-info { font-size: 24px; color: var(--text-secondary); margin-top: 10px; font-weight: 500;}
-
-        #sunset-icon {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-            margin-left: 8px;
-            stroke: var(--text-secondary);
-        }
-
-        /* עיצוב רשימת האירועים */
+        /* רשימות אירועים */
         .event-list {
             list-style-type: none;
             padding: 0;
             margin: 0;
+            text-align: right;
             flex-grow: 1;
             overflow-y: auto;
-            max-height: 350px;
+            max-height: 250px;
         }
 
         .event-item {
-            font-size: 22px;
-            padding: 8px 0;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--divider-color);
         }
 
+        .event-item:last-child { border-bottom: none; }
+
         .event-time {
-            font-weight: bold;
-            color: var(--event-time-color);
-            width: 80px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-accent);
+            width: 75px;
             flex-shrink: 0;
-            font-family: monospace;
-            font-size: 24px;
+            font-variant-numeric: tabular-nums;
         }
 
         .event-title {
+            font-size: 20px;
+            font-weight: 500;
             flex-grow: 1;
-            padding-right: 15px;
-            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .empty-state {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-secondary);
             font-style: italic;
-            padding: 10px 0;
+            text-align: center;
+            padding: 20px 0;
         }
 
-        .separator { border-top: 2px dashed var(--border-color); margin: 30px auto 10px auto; width: 95%; transition: border-color 1s ease;}
-
+        /* ספירה לאחור */
+        #timer-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px 0;}
         #timer { 
-            font-size: 46px; 
-            font-weight: bold; 
-            white-space: nowrap; 
+            font-size: 52px; 
+            font-weight: 800; 
             background: var(--timer-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: inline-block;
-            margin-top: 15px;
-            font-family: monospace;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
     
-    <div id="dashboard-grid">
+    <div id="bento-grid">
         
-        <div id="left-panel" class="panel">
-            <div id="clock">00:00:00</div>
-            <div id="date">--/--/----</div>
+        <div class="col">
+            <div class="bento-card" style="flex-grow: 1;">
+                <div class="card-title">אירועי היום</div>
+                <ul id="events-today" class="event-list">
+                    <div class="empty-state">טוען נתונים...</div>
+                </ul>
+            </div>
             
-            <div id="temp">--°C</div>
-            <div id="uv-info">טוען מדד קרינה...</div>
-            <div id="sunset-info">טוען נתוני שמש...</div>
+            <div class="bento-card" style="flex-grow: 1;">
+                <div class="card-title">מחר</div>
+                <ul id="events-tomorrow" class="event-list">
+                    <div class="empty-state">טוען נתונים...</div>
+                </ul>
+            </div>
         </div>
 
-        <div id="right-panel" class="panel">
-            <div class="section-title">הלוח המשפחתי 📅</div>
-            
-            <div class="sub-title">היום</div>
-            <ul id="events-today" class="event-list">
-                <div class="empty-state">טוען אירועים...</div>
-            </ul>
+        <div class="col">
+            <div class="bento-card" style="align-items: center; padding: 35px 20px;">
+                <div id="clock">00:00:00</div>
+                <div id="date">--/--/----</div>
+            </div>
 
-            <div class="sub-title">מחר</div>
-            <ul id="events-tomorrow" class="event-list">
-                <div class="empty-state">טוען אירועים...</div>
-            </ul>
+            <div class="bento-card" style="align-items: center; flex-grow: 1;">
+                <div id="temp">--°C</div>
+                <div class="weather-metrics" style="width: 100%;">
+                    <div class="metric-item">
+                        <span id="uv-current">--</span>
+                        <span class="metric-label" id="uv-max">שיא היום: --</span>
+                    </div>
+                    <div class="metric-item">
+                        <span id="sunset-time">--:--</span>
+                        <span class="metric-label" id="sunset-label">שקיעה</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-    </div>
+        <div class="bento-card full-width">
+            <div id="timer-wrapper">
+                <div class="card-title" style="margin-bottom: 0; text-align: center;">☀️ הספירה לאחור לתחילת החופש הגדול 🌊</div>
+                <div id="timer">טוען...</div>
+            </div>
+        </div>
 
-    <div class="separator"></div>
-
-    <div id="bottom-panel">
-        <div class="section-title" style="margin-bottom: 0;">☀️ הספירה לאחור לתחילת החופש הגדול 🌊</div>
-        <div id="timer">טוען...</div>
     </div>
 
     <script>
         // הדבק כאן את כתובת ה-URL שקיבלת מגוגל סקריפט:
         var googleScriptUrl = "https://script.google.com/macros/s/AKfycbziD0jqPMC5zcgw-2MeP-Gd6ADYzmnAYFsc13yccN6Tny5R0yMJe75oHQVqeMNabOaj/exec";
 
-        var sunIconSvg = '<svg id="sunset-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="18" x2="22" y2="18"/><path d="M6 18a6 6 0 0 1 12 0"/><line x1="12" y1="5" x2="12" y2="9"/><line x1="5.22" y1="11.22" x2="7.34" y2="13.34"/><line x1="18.78" y1="11.22" x2="16.66" y2="13.34"/></svg>';
+        var sunIconSvg = '<svg id="sunset-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;"><line x1="2" y1="18" x2="22" y2="18"/><path d="M6 18a6 6 0 0 1 12 0"/><line x1="12" y1="5" x2="12" y2="9"/><line x1="5.22" y1="11.22" x2="7.34" y2="13.34"/><line x1="18.78" y1="11.22" x2="16.66" y2="13.34"/></svg>';
 
         function updateClock() {
             var now = new Date();
@@ -207,54 +246,51 @@
             fetch(url).then(function(r){return r.json()}).then(function(data){
                 if (!data || !data.current || !data.hourly || !data.daily) return;
 
-                // עדכון טמפרטורה
+                // עדכון טמפרטורה וצבעים
                 var tempVal = Math.round(data.current.temperature_2m);
                 var tempEl = document.getElementById("temp");
-                tempEl.innerHTML = tempVal + "°C";
+                tempEl.innerHTML = tempVal + "°"; // השמטנו את ה-C למראה נקי יותר
                 
-                // הנדסת צבעי הטמפרטורה
                 var r, g, b;
-                if (tempVal <= 20) {
-                    r = 0; g = 150; b = 255;
-                } else if (tempVal <= 25) {
+                if (tempVal <= 20) { r = 10; g = 132; b = 255; } 
+                else if (tempVal <= 25) {
                     var p = (tempVal - 20) / 5;
-                    r = Math.round(200 * p);
-                    g = Math.round(150 + (100) * p);
-                    b = Math.round(255 - 200 * p);
-                } else if (tempVal <= 30) {
+                    r = Math.round(10 + (245 * p)); g = Math.round(132 + (63 * p)); b = Math.round(255 - 255 * p);
+                } 
+                else if (tempVal <= 30) {
                     var p = (tempVal - 25) / 5;
-                    r = 255;
-                    g = Math.round(200 - 100 * p);
-                    b = 0;
-                } else {
-                    r = 255; g = 50; b = 0;
-                }
+                    r = 255; g = Math.round(195 - 145 * p); b = 0;
+                } 
+                else { r = 255; g = 50; b = 0; }
                 tempEl.style.color = "rgb(" + r + "," + g + "," + b + ")";
 
                 // עדכון קרינה
                 var currentHour = new Date().getHours();
                 var uvCurrent = data.hourly.uv_index[currentHour] !== undefined ? data.hourly.uv_index[currentHour] : "--";
                 var uvMax = data.daily.uv_index_max[0];
-                document.getElementById("uv-info").innerHTML = "קרינה: " + uvCurrent + " (שיא היום: " + uvMax + ")";
+                document.getElementById("uv-current").innerHTML = "קרינה: " + uvCurrent;
+                document.getElementById("uv-max").innerHTML = "שיא היום: " + uvMax;
 
-                // עדכון מצב יום/לילה ונתוני שמש
+                // עדכון מצב יום/לילה
                 var isDay = data.current.is_day === 1;
                 document.body.className = isDay ? "light-mode" : "dark-mode";
 
+                // עדכון שקיעה/זריחה
                 var now = new Date();
                 var sunsetRaw = data.daily.sunset[0];
                 var sunsetDate = sunsetRaw ? new Date(sunsetRaw) : null;
                 
                 if (sunsetDate && now < sunsetDate) {
                     var sunsetTime = sunsetRaw.split("T")[1].substring(0, 5);
-                    document.getElementById("sunset-info").innerHTML = "שקיעה " + sunIconSvg + ": " + sunsetTime;
+                    document.getElementById("sunset-time").innerHTML = sunsetTime;
+                    document.getElementById("sunset-label").innerHTML = "שקיעה " + sunIconSvg;
                 } else {
                     var sunriseRaw = data.daily.sunrise[1];
                     var sunriseTime = "--:--";
-                    if (sunriseRaw) {
-                        sunriseTime = sunriseRaw.split("T")[1].substring(0, 5);
-                    }
-                    document.getElementById("sunset-info").innerHTML = "זריחה " + sunIconSvg + ": " + sunriseTime;
+                    if (sunriseRaw) sunriseTime = sunriseRaw.split("T")[1].substring(0, 5);
+                    
+                    document.getElementById("sunset-time").innerHTML = sunriseTime;
+                    document.getElementById("sunset-label").innerHTML = "זריחה " + sunIconSvg;
                 }
             }).catch(function(){});
         }
@@ -294,10 +330,11 @@
             var diff = target - new Date();
             if (diff <= 0) { document.getElementById("timer").innerHTML = "החופש הגדול התחיל!"; return; }
             var d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+            
+            // תצוגת טיימר רחבה ונבנית היטב
             document.getElementById("timer").innerHTML = d + " ימים " + h + " שעות " + m + " דקות " + s + " שניות ";
         }
 
-        // טעינה ראשונית וקביעת מרווחי רענון למנועים השונים
         updateClock(); 
         updateCountdown(); 
         updateWeatherAndTheme(); 
@@ -305,8 +342,8 @@
 
         setInterval(updateClock, 1000); 
         setInterval(updateCountdown, 1000); 
-        setInterval(updateWeatherAndTheme, 900000); // בדיקת אקלים ואור כל 15 דקות
-        setInterval(fetchCalendarEvents, 300000); // סנכרון יומן כל 5 דקות
+        setInterval(updateWeatherAndTheme, 900000); 
+        setInterval(fetchCalendarEvents, 300000); 
     </script>
 </body>
 </html>
