@@ -54,7 +54,7 @@
             transition: background 1.5s ease, color 1.5s ease;
         }
 
-        /* רשת אריחים קפואה ומוחלטת */
+        /* רשת אריחים */
         #bento-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -87,7 +87,7 @@
             position: relative;
         }
 
-        /* טיפוגרפיה לכותרות */
+        /* טיפוגרפיה מרכזית (ברירת מחדל למסכים גדולים) */
         .card-title {
             font-size: 18px;
             font-weight: 600;
@@ -100,23 +100,16 @@
             width: 100%;
         }
 
-        /* מחלקת העוגן החדשה ליישור הקו העליון */
         .top-metric-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            padding-top: 24px;
+            padding-top: 16px;
             width: 100%;
         }
 
-        /* פס גלילה נקי בסגנון אפל */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 10px; }
-
-        /* נתוני זמן ואקלים מיושרים */
         #clock, #temp { 
             font-size: 96px; 
             font-weight: 700; 
@@ -127,10 +120,18 @@
         
         #date { font-size: 24px; font-weight: 400; color: var(--text-secondary); margin-top: 16px;}
 
-        .weather-metrics { display: flex; justify-content: space-around; margin-top: 32px; border-top: 1px solid var(--divider-color); padding-top: 20px; width: 100%;}
+        /* הנדסת המרווח הגמיש (מונע גלישה) */
+        .weather-metrics { 
+            display: flex; 
+            justify-content: space-around; 
+            margin-top: auto; 
+            border-top: 1px solid var(--divider-color); 
+            padding-top: 16px; 
+            width: 100%;
+        }
+        
         .metric-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 20px; font-weight: 500;}
         .metric-label { font-size: 14px; color: var(--text-secondary); font-weight: 400;}
-
         #sunset-icon { stroke: var(--text-primary); transition: stroke 1.5s ease; margin-left: 5px; vertical-align: middle;}
 
         /* רשימות אירועים */
@@ -189,6 +190,31 @@
             font-variant-numeric: tabular-nums;
             letter-spacing: -1px;
             margin-top: 8px;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 10px; }
+
+        /* =========================================
+           מנוע רספונסיבי למסכי אייפד קטנים
+           ========================================= */
+        @media (max-height: 850px), (max-width: 1050px) {
+            body { padding: 16px; }
+            #bento-grid { gap: 16px; }
+            .bento-card { padding: 16px 20px; border-radius: 24px; }
+            
+            #clock, #temp { font-size: 72px; }
+            #date { font-size: 20px; margin-top: 10px; }
+            
+            .event-time, .event-title, .empty-state { font-size: 20px; }
+            .event-time { width: 80px; }
+            
+            #timer { font-size: 38px; }
+            .card-title { font-size: 16px; margin-bottom: 8px; }
+            
+            .weather-metrics { padding-top: 12px; }
+            .metric-item { font-size: 18px; }
         }
     </style>
 </head>
