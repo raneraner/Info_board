@@ -50,7 +50,7 @@
             margin: 0;
             padding: 24px;
             box-sizing: border-box;
-            height: 100vh; /* נעילת הגובה המוחלט למסך מלא */
+            height: 100vh;
             overflow: hidden; 
             direction: rtl;
             transition: background 1.5s ease, color 1.5s ease;
@@ -85,7 +85,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 0; /* קריטי: מאפשר לאריח להכיל גלילה מבלי להתנפח */
+            min-height: 0; 
             position: relative;
         }
 
@@ -99,9 +99,10 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             flex-shrink: 0;
+            width: 100%;
         }
 
-        /* פס גלילה נקי בסגנון אפל (יופיע רק כשיש עומס אירועים) */
+        /* פס גלילה נקי בסגנון אפל */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 10px; }
@@ -138,16 +139,16 @@
         .event-item:last-child { border-bottom: none; }
 
         .event-time {
-            font-size: 18px;
+            font-size: 24px;
             font-weight: 600;
             color: var(--text-accent);
-            width: 75px;
+            width: 95px;
             flex-shrink: 0;
             font-variant-numeric: tabular-nums;
         }
 
         .event-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 500;
             flex-grow: 1;
             white-space: nowrap;
@@ -156,7 +157,7 @@
         }
 
         .empty-state {
-            font-size: 18px;
+            font-size: 24px;
             color: var(--text-secondary);
             font-style: italic;
             text-align: center;
@@ -188,9 +189,12 @@
             </ul>
         </div>
 
-        <div class="bento-card" style="align-items: center;">
-            <div id="clock">00:00:00</div>
-            <div id="date">--/--/----</div>
+        <div class="bento-card" style="justify-content: flex-start; align-items: stretch;">
+            <div class="card-title">שעה</div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div id="clock">00:00:00</div>
+                <div id="date">--/--/----</div>
+            </div>
         </div>
         
         <div class="bento-card" style="justify-content: flex-start;">
@@ -200,16 +204,19 @@
             </ul>
         </div>
 
-        <div class="bento-card" style="align-items: center;">
-            <div id="temp">--°C</div>
-            <div class="weather-metrics">
-                <div class="metric-item">
-                    <span id="uv-current">--</span>
-                    <span class="metric-label" id="uv-max">שיא היום: --</span>
-                </div>
-                <div class="metric-item">
-                    <span id="sunset-time">--:--</span>
-                    <span class="metric-label" id="sunset-label">שקיעה</span>
+        <div class="bento-card" style="justify-content: flex-start; align-items: stretch;">
+            <div class="card-title">מזג אוויר</div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+                <div id="temp">--°C</div>
+                <div class="weather-metrics">
+                    <div class="metric-item">
+                        <span id="uv-current">--</span>
+                        <span class="metric-label" id="uv-max">שיא היום: --</span>
+                    </div>
+                    <div class="metric-item">
+                        <span id="sunset-time">--:--</span>
+                        <span class="metric-label" id="sunset-label">שקיעה</span>
+                    </div>
                 </div>
             </div>
         </div>
