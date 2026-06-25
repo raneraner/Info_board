@@ -24,6 +24,7 @@
   </div>
 
   <script>
+    // הדבק כאן את כתובת השרת של גוגל (ה-URL שמסתיים ב-exec)
     const scriptUrl = "https://script.google.com/macros/s/AKfycbzHCrEqD_oAQ2Q-RIkEwWyvAtbO-5JP_En2yTeJkCR0YdggHOO_1xGQeihaQIy4me9J/exec";
 
     function sendMessage() {
@@ -39,10 +40,10 @@
       statusDiv.textContent = "שולח...";
       statusDiv.style.color = "black";
 
-      fetch(scriptUrl, {
-        method: "POST",
-        body: JSON.stringify({ message: msg })
-      })
+      // עוקף אבטחת CORS באמצעות שליחת בקשת GET
+      const fullUrl = scriptUrl + "?action=updateMsg&msg=" + encodeURIComponent(msg);
+
+      fetch(fullUrl)
       .then(response => response.json())
       .then(data => {
         if(data.status === "success") {
@@ -50,12 +51,12 @@
           statusDiv.style.color = "green";
           document.getElementById("messageBox").value = "";
         } else {
-          statusDiv.textContent = "שגיאה בשליחה.";
+          statusDiv.textContent = "שגיאה משרת גוגל: " + data.details;
           statusDiv.style.color = "red";
         }
       })
       .catch(error => {
-        statusDiv.textContent = "שגיאת תקשורת.";
+        statusDiv.textContent = "שגיאת תקשורת בגישה לגוגל.";
         statusDiv.style.color = "red";
       });
     }
