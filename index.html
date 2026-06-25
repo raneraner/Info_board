@@ -9,13 +9,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
-        /* הנדסת משתנים - מעבר חלק בין יום ללילה */
+        /* הנדסת משתנים - זכוכית אפל עדכנית */
         :root {
-            /* מצב לילה (ברירת מחדל) */
+            /* מצב לילה */
             --bg-gradient: linear-gradient(135deg, #0d0d0f 0%, #1a1a24 100%);
-            --glass-bg: rgba(30, 30, 35, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(30, 30, 35, 0.35); /* שקיפות עמוקה יותר */
+            --glass-border: rgba(255, 255, 255, 0.15); /* מסגרת חיצונית מורגשת מעט */
+            --glass-inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1); /* השתקפות אור פנימית */
+            --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4); /* צל היקפי רך */
             
             --text-primary: #ffffff;
             --text-secondary: #8e8e93;
@@ -28,9 +29,10 @@
         body.light-mode {
             /* מצב יום */
             --bg-gradient: linear-gradient(135deg, #e5e5ea 0%, #f2f2f7 100%);
-            --glass-bg: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-inner-glow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.05);
             
             --text-primary: #1c1c1e;
             --text-secondary: #8e8e93;
@@ -54,7 +56,7 @@
             transition: background 1.5s ease, color 1.5s ease;
         }
 
-        /* רשת האריחים - Bento Grid */
+        /* רשת האריחים */
         #bento-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -75,14 +77,16 @@
             grid-column: 1 / -1;
         }
 
-        /* עיצוב כרטיסי הזכוכית - Glassmorphism */
+        /* עיצוב הזכוכית המעודכן */
         .bento-card {
             background: var(--glass-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            /* טשטוש עוצמתי וחידוד צבעים מאחורי הזכוכית */
+            backdrop-filter: blur(50px) saturate(180%);
+            -webkit-backdrop-filter: blur(50px) saturate(180%);
             border: 1px solid var(--glass-border);
             border-radius: 28px;
-            box-shadow: var(--glass-shadow);
+            /* שילוב של הצל החיצוני והשתקפות האור הפנימית */
+            box-shadow: var(--glass-shadow), var(--glass-inner-glow);
             padding: 24px;
             box-sizing: border-box;
             transition: background 1.5s ease, border 1.5s ease, box-shadow 1.5s ease;
@@ -180,7 +184,7 @@
         
         <div class="col">
             <div class="bento-card" style="flex-grow: 1;">
-                <div class="card-title">אירועי היום</div>
+                <div class="card-title">היום</div>
                 <ul id="events-today" class="event-list">
                     <div class="empty-state">טוען נתונים...</div>
                 </ul>
@@ -246,10 +250,9 @@
             fetch(url).then(function(r){return r.json()}).then(function(data){
                 if (!data || !data.current || !data.hourly || !data.daily) return;
 
-                // עדכון טמפרטורה וצבעים
                 var tempVal = Math.round(data.current.temperature_2m);
                 var tempEl = document.getElementById("temp");
-                tempEl.innerHTML = tempVal + "°"; // השמטנו את ה-C למראה נקי יותר
+                tempEl.innerHTML = tempVal + "°"; 
                 
                 var r, g, b;
                 if (tempVal <= 20) { r = 10; g = 132; b = 255; } 
@@ -264,18 +267,15 @@
                 else { r = 255; g = 50; b = 0; }
                 tempEl.style.color = "rgb(" + r + "," + g + "," + b + ")";
 
-                // עדכון קרינה
                 var currentHour = new Date().getHours();
                 var uvCurrent = data.hourly.uv_index[currentHour] !== undefined ? data.hourly.uv_index[currentHour] : "--";
                 var uvMax = data.daily.uv_index_max[0];
                 document.getElementById("uv-current").innerHTML = "קרינה: " + uvCurrent;
                 document.getElementById("uv-max").innerHTML = "שיא היום: " + uvMax;
 
-                // עדכון מצב יום/לילה
                 var isDay = data.current.is_day === 1;
                 document.body.className = isDay ? "light-mode" : "dark-mode";
 
-                // עדכון שקיעה/זריחה
                 var now = new Date();
                 var sunsetRaw = data.daily.sunset[0];
                 var sunsetDate = sunsetRaw ? new Date(sunsetRaw) : null;
@@ -331,7 +331,6 @@
             if (diff <= 0) { document.getElementById("timer").innerHTML = "החופש הגדול התחיל!"; return; }
             var d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
             
-            // תצוגת טיימר רחבה ונבנית היטב
             document.getElementById("timer").innerHTML = d + " ימים " + h + " שעות " + m + " דקות " + s + " שניות ";
         }
 
