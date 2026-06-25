@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,8 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
 
     <style>
         /* הנדסת משתנים - זכוכית אפל עדכנית */
@@ -16,6 +18,11 @@
             --glass-border: rgba(255, 255, 255, 0.15);
             --glass-inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
             --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+            
+            /* משתני פתקית חמה למצב לילה */
+            --note-bg: rgba(255, 215, 0, 0.08);
+            --note-border: rgba(255, 215, 0, 0.15);
+            --note-glow: inset 0 1px 8px rgba(255, 215, 0, 0.1);
             
             --text-primary: #ffffff;
             --text-secondary: #8e8e93;
@@ -32,6 +39,11 @@
             --glass-inner-glow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
             --glass-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.05);
             
+            /* משתני פתקית חמה למצב יום */
+            --note-bg: rgba(255, 215, 0, 0.25);
+            --note-border: rgba(255, 215, 0, 0.4);
+            --note-glow: inset 0 1px 8px rgba(255, 215, 0, 0.3);
+            
             --text-primary: #1c1c1e;
             --text-secondary: #8e8e93;
             --text-accent: #007aff;
@@ -46,53 +58,68 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             text-align: center; 
             margin: 0;
-            padding: 24px;
+            padding: 2vh;
             box-sizing: border-box;
             height: 100vh;
             overflow: hidden; 
-            direction: rtl;
             transition: background 1.5s ease, color 1.5s ease;
         }
 
-        /* רשת אריחים */
+        /* רשת אריחים קפואה - 3 שורות כעת */
         #bento-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr) auto;
-            gap: 24px;
+            grid-template-rows: repeat(2, 38vh) auto;
+            gap: 20px;
             height: 100%;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        /* עיצוב הזכוכית */
+        /* עיצוב הזכוכית הכללי */
         .bento-card {
             background: var(--glass-bg);
             backdrop-filter: blur(50px) saturate(180%);
             -webkit-backdrop-filter: blur(50px) saturate(180%);
             border: 1px solid var(--glass-border);
-            border-radius: 32px;
+            border-radius: 28px;
             box-shadow: var(--glass-shadow), var(--glass-inner-glow);
-            padding: 24px 28px;
+            padding: 20px 24px;
             box-sizing: border-box;
             transition: background 1.5s ease, border 1.5s ease, box-shadow 1.5s ease;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             min-height: 0; 
+            overflow: hidden;
             position: relative;
         }
 
-        /* טיפוגרפיה מרכזית (ברירת מחדל למסכים גדולים) */
+        /* עיצוב ייעודי לפתקית המשפחתית */
+        .message-card {
+            background: var(--note-bg);
+            border: 1px solid var(--note-border);
+            box-shadow: var(--glass-shadow), var(--note-glow);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #family-message {
+            font-family: 'Caveat', cursive;
+            font-weight: 700;
+            font-size: clamp(28px, 4.5vh, 48px);
+            color: var(--text-primary);
+            line-height: 1.2;
+            transform: rotate(-2deg);
+            padding: 10px;
+        }
+
+        /* טיפוגרפיה אדפטיבית */
         .card-title {
-            font-size: 18px;
+            font-size: clamp(14px, 2vh, 18px);
             font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             text-align: right;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -104,40 +131,45 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
-            padding-top: 16px;
             width: 100%;
+            min-height: 0;
         }
 
         #clock, #temp { 
-            font-size: 96px; 
+            font-size: clamp(52px, 9vh, 96px); 
             font-weight: 700; 
             font-variant-numeric: tabular-nums; 
             line-height: 1; 
             letter-spacing: -2px;
         }
         
-        #date { font-size: 24px; font-weight: 400; color: var(--text-secondary); margin-top: 16px;}
+        #date { 
+            font-size: clamp(16px, 2vh, 24px); 
+            font-weight: 400; 
+            color: var(--text-secondary); 
+            margin-top: 12px;
+        }
 
-        /* הנדסת המרווח הגמיש (מונע גלישה) */
         .weather-metrics { 
             display: flex; 
             justify-content: space-around; 
             margin-top: auto; 
             border-top: 1px solid var(--divider-color); 
-            padding-top: 16px; 
+            padding-top: 12px; 
             width: 100%;
+            flex-shrink: 0;
         }
         
-        .metric-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 20px; font-weight: 500;}
-        .metric-label { font-size: 14px; color: var(--text-secondary); font-weight: 400;}
+        .metric-item { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: clamp(16px, 2vh, 20px); font-weight: 500;}
+        .metric-label { font-size: clamp(11px, 1.4vh, 14px); color: var(--text-secondary); font-weight: 400;}
         #sunset-icon { stroke: var(--text-primary); transition: stroke 1.5s ease; margin-left: 5px; vertical-align: middle;}
 
-        /* רשימות אירועים */
+        /* יומן */
         .event-list {
             list-style-type: none;
-            padding: 0 0 0 10px;
+            padding: 0 0 0 5px;
             margin: 0;
             text-align: right;
             flex-grow: 1;
@@ -147,23 +179,23 @@
         .event-item {
             display: flex;
             align-items: center;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--divider-color);
         }
 
         .event-item:last-child { border-bottom: none; }
 
         .event-time {
-            font-size: 24px;
+            font-size: clamp(16px, 2.2vh, 24px);
             font-weight: 600;
             color: var(--text-accent);
-            width: 95px;
+            width: 85px;
             flex-shrink: 0;
             font-variant-numeric: tabular-nums;
         }
 
         .event-title {
-            font-size: 24px;
+            font-size: clamp(16px, 2.2vh, 24px);
             font-weight: 500;
             flex-grow: 1;
             white-space: nowrap;
@@ -172,64 +204,35 @@
         }
 
         .empty-state {
-            font-size: 24px;
+            font-size: clamp(18px, 2.2vh, 24px);
             color: var(--text-secondary);
             font-style: italic;
             text-align: center;
             padding: 20px 0;
         }
 
-        /* ספירה לאחור */
-        #timer-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 0;}
+        /* ספירה לאחור חצויה */
+        #timer-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 0;}
         #timer { 
-            font-size: 52px; 
+            font-size: clamp(24px, 3.5vh, 42px); 
             font-weight: 800; 
             background: var(--timer-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-variant-numeric: tabular-nums;
             letter-spacing: -1px;
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 10px; }
-
-        /* =========================================
-           מנוע רספונסיבי למסכי אייפד קטנים
-           ========================================= */
-        @media (max-height: 850px), (max-width: 1050px) {
-            body { padding: 16px; }
-            #bento-grid { gap: 16px; }
-            .bento-card { padding: 16px 20px; border-radius: 24px; }
-            
-            #clock, #temp { font-size: 72px; }
-            #date { font-size: 20px; margin-top: 10px; }
-            
-            .event-time, .event-title, .empty-state { font-size: 20px; }
-            .event-time { width: 80px; }
-            
-            #timer { font-size: 38px; }
-            .card-title { font-size: 16px; margin-bottom: 8px; }
-            
-            .weather-metrics { padding-top: 12px; }
-            .metric-item { font-size: 18px; }
-        }
+        ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
     
     <div id="bento-grid">
         
-        <div class="bento-card">
-            <div class="card-title">שעה</div>
-            <div class="top-metric-container">
-                <div id="clock">00:00:00</div>
-                <div id="date">--/--/----</div>
-            </div>
-        </div>
-
         <div class="bento-card">
             <div class="card-title">מזג אוויר</div>
             <div class="top-metric-container">
@@ -244,6 +247,14 @@
                         <span class="metric-label" id="sunset-label">שקיעה</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="bento-card">
+            <div class="card-title">שעה</div>
+            <div class="top-metric-container">
+                <div id="clock">00:00:00</div>
+                <div id="date">--/--/----</div>
             </div>
         </div>
         
@@ -261,9 +272,13 @@
             </ul>
         </div>
 
-        <div class="bento-card full-width card-timer" style="justify-content: center;">
+        <div class="bento-card message-card">
+            <div id="family-message">טוען הודעה...</div>
+        </div>
+
+        <div class="bento-card card-timer" style="justify-content: center;">
             <div id="timer-wrapper">
-                <div class="card-title" style="margin-bottom: 0; text-align: center;">☀️ הספירה לאחור לתחילת החופש הגדול 🌊</div>
+                <div class="card-title" style="margin-bottom: 0; text-align: center;">☀️ החופש הגדול 🌊</div>
                 <div id="timer">טוען...</div>
             </div>
         </div>
@@ -271,10 +286,10 @@
     </div>
 
     <script>
-        // הדבק כאן את כתובת ה-URL שקיבלת מגוגל סקריפט:
-        var googleScriptUrl = "https://script.google.com/macros/s/AKfycbziD0jqPMC5zcgw-2MeP-Gd6ADYzmnAYFsc13yccN6Tny5R0yMJe75oHQVqeMNabOaj/exec";
+        // הדבק כאן את ה-URL של השרת
+        var googleScriptUrl = "https://script.google.com/macros/s/AKfycbzHCrEqD_oAQ2Q-RIkEwWyvAtbO-5JP_En2yTeJkCR0YdggHOO_1xGQeihaQIy4me9J/exec";
 
-        var sunIconSvg = '<svg id="sunset-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="18" x2="22" y2="18"/><path d="M6 18a6 6 0 0 1 12 0"/><line x1="12" y1="5" x2="12" y2="9"/><line x1="5.22" y1="11.22" x2="7.34" y2="13.34"/><line x1="18.78" y1="11.22" x2="16.66" y2="13.34"/></svg>';
+        var sunIconSvg = '<svg id="sunset-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="18" x2="22" y2="18"/><path d="M6 18a6 6 0 0 1 12 0"/><line x1="12" y1="5" x2="12" y2="9"/><line x1="5.22" y1="11.22" x2="7.34" y2="13.34"/><line x1="18.78" y1="11.22" x2="16.66" y2="13.34"/></svg>';
 
         function updateClock() {
             var now = new Date();
@@ -337,7 +352,7 @@
             }).catch(function(){});
         }
 
-        function fetchCalendarEvents() {
+        function fetchDashboardData() {
             if (!googleScriptUrl || googleScriptUrl === "YOUR_URL_HERE") return;
             
             fetch(googleScriptUrl)
@@ -349,6 +364,7 @@
                 todayList.innerHTML = "";
                 tomorrowList.innerHTML = "";
                 
+                // עדכון יומנים
                 if (data.today && data.today.length > 0) {
                     data.today.forEach(function(ev) {
                         todayList.innerHTML += '<li class="event-item"><div class="event-time">' + ev.time + '</div><div class="event-title">' + ev.title + '</div></li>';
@@ -364,13 +380,18 @@
                 } else {
                     tomorrowList.innerHTML = '<div class="empty-state">אין אירועים מתוכננים למחר</div>';
                 }
+
+                // עדכון הודעת הפתקית
+                if (data.message !== undefined) {
+                    document.getElementById("family-message").innerHTML = data.message !== "" ? data.message : "אין הודעות חדשות";
+                }
             }).catch(function(){});
         }
 
         function updateCountdown() {
             var target = new Date(2026, 6, 1, 0, 0, 0); 
             var diff = target - new Date();
-            if (diff <= 0) { document.getElementById("timer").innerHTML = "החופש הגדול התחיל!"; return; }
+            if (diff <= 0) { document.getElementById("timer").innerHTML = "התחיל!"; return; }
             var d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
             
             document.getElementById("timer").innerHTML = d + " ימים " + h + " שעות " + m + " דקות " + s + " שניות ";
@@ -379,12 +400,12 @@
         updateClock(); 
         updateCountdown(); 
         updateWeatherAndTheme(); 
-        fetchCalendarEvents();
+        fetchDashboardData();
 
         setInterval(updateClock, 1000); 
         setInterval(updateCountdown, 1000); 
         setInterval(updateWeatherAndTheme, 900000); 
-        setInterval(fetchCalendarEvents, 300000); 
+        setInterval(fetchDashboardData, 300000); 
     </script>
 </body>
 </html>
