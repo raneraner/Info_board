@@ -11,7 +11,6 @@
     <style>
         /* הנדסת משתנים - זכוכית אפל עדכנית */
         :root {
-            /* מצב לילה */
             --bg-gradient: linear-gradient(135deg, #0d0d0f 0%, #1a1a24 100%);
             --glass-bg: rgba(30, 30, 35, 0.35);
             --glass-border: rgba(255, 255, 255, 0.15);
@@ -27,7 +26,6 @@
         }
 
         body.light-mode {
-            /* מצב יום */
             --bg-gradient: linear-gradient(135deg, #e5e5ea 0%, #f2f2f7 100%);
             --glass-bg: rgba(255, 255, 255, 0.4);
             --glass-border: rgba(255, 255, 255, 0.6);
@@ -71,7 +69,7 @@
             grid-column: 1 / -1;
         }
 
-        /* עיצוב הזכוכית המעודכן והגבלות הגובה */
+        /* עיצוב הזכוכית */
         .bento-card {
             background: var(--glass-bg);
             backdrop-filter: blur(50px) saturate(180%);
@@ -84,12 +82,12 @@
             transition: background 1.5s ease, border 1.5s ease, box-shadow 1.5s ease;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 0; 
             position: relative;
         }
 
-        /* טיפוגרפיה */
+        /* טיפוגרפיה לכותרות */
         .card-title {
             font-size: 18px;
             font-weight: 600;
@@ -102,18 +100,34 @@
             width: 100%;
         }
 
+        /* מחלקת העוגן החדשה ליישור הקו העליון */
+        .top-metric-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 24px;
+            width: 100%;
+        }
+
         /* פס גלילה נקי בסגנון אפל */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 10px; }
 
-        /* אזור הזמן */
-        #clock { font-size: 96px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -2px;}
-        #date { font-size: 24px; font-weight: 400; color: var(--text-secondary); margin-top: 8px;}
+        /* נתוני זמן ואקלים מיושרים */
+        #clock, #temp { 
+            font-size: 96px; 
+            font-weight: 700; 
+            font-variant-numeric: tabular-nums; 
+            line-height: 1; 
+            letter-spacing: -2px;
+        }
+        
+        #date { font-size: 24px; font-weight: 400; color: var(--text-secondary); margin-top: 16px;}
 
-        /* אזור אקלים */
-        #temp { font-size: 82px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1;}
-        .weather-metrics { display: flex; justify-content: space-around; margin-top: 20px; border-top: 1px solid var(--divider-color); padding-top: 20px; width: 100%;}
+        .weather-metrics { display: flex; justify-content: space-around; margin-top: 32px; border-top: 1px solid var(--divider-color); padding-top: 20px; width: 100%;}
         .metric-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 20px; font-weight: 500;}
         .metric-label { font-size: 14px; color: var(--text-secondary); font-weight: 400;}
 
@@ -182,9 +196,17 @@
     
     <div id="bento-grid">
         
-        <div class="bento-card" style="justify-content: flex-start; align-items: stretch;">
+        <div class="bento-card">
+            <div class="card-title">שעה</div>
+            <div class="top-metric-container">
+                <div id="clock">00:00:00</div>
+                <div id="date">--/--/----</div>
+            </div>
+        </div>
+
+        <div class="bento-card">
             <div class="card-title">מזג אוויר</div>
-            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+            <div class="top-metric-container">
                 <div id="temp">--°C</div>
                 <div class="weather-metrics">
                     <div class="metric-item">
@@ -198,30 +220,22 @@
                 </div>
             </div>
         </div>
-
-        <div class="bento-card" style="justify-content: flex-start; align-items: stretch;">
-            <div class="card-title">שעה</div>
-            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                <div id="clock">00:00:00</div>
-                <div id="date">--/--/----</div>
-            </div>
-        </div>
         
-        <div class="bento-card" style="justify-content: flex-start;">
+        <div class="bento-card">
             <div class="card-title">היום</div>
             <ul id="events-today" class="event-list">
                 <div class="empty-state">טוען נתונים...</div>
             </ul>
         </div>
 
-        <div class="bento-card" style="justify-content: flex-start;">
+        <div class="bento-card">
             <div class="card-title">מחר</div>
             <ul id="events-tomorrow" class="event-list">
                 <div class="empty-state">טוען נתונים...</div>
             </ul>
         </div>
 
-        <div class="bento-card full-width card-timer">
+        <div class="bento-card full-width card-timer" style="justify-content: center;">
             <div id="timer-wrapper">
                 <div class="card-title" style="margin-bottom: 0; text-align: center;">☀️ הספירה לאחור לתחילת החופש הגדול 🌊</div>
                 <div id="timer">טוען...</div>
