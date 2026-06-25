@@ -7,7 +7,7 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
+    ⁠<meta name="theme-color" id="theme-color-meta" content="#0d0d0f">
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
 
     <style>
@@ -344,6 +344,9 @@
 
                 var isDay = data.current.is_day === 1;
                 document.body.className = isDay ? "light-mode" : "dark-mode";
+                document.documentElement.style.backgroundColor = isDay ? "#e5e5ea" : "#0d0d0f";
+                document.getElementById("theme-color-meta").setAttribute("content", isDay ? "#e5e5ea" : "#0d0d0f");
+
 
                 var now = new Date();
                 var sunsetRaw = data.daily.sunset[0];
