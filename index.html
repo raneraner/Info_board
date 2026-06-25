@@ -123,17 +123,18 @@
             width: 100%;
         }
 
+        /* תיקון הנדסי: יישור עליון קשיח ומרווח קבוע ליישור פלס */
         .top-metric-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             width: 100%;
             min-height: 0;
+            padding-top: 16px;
         }
 
-        /* גדלים מוחלטים בפיקסלים ללא CLAMP */
         #clock, #temp { 
             font-size: 96px; 
             font-weight: 700; 
@@ -224,6 +225,7 @@
             #bento-grid { gap: 16px; }
             .bento-card { padding: 16px 20px; border-radius: 24px; }
             
+            .top-metric-container { padding-top: 8px; }
             #clock, #temp { font-size: 72px; }
             #date { font-size: 20px; }
             
