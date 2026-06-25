@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Life Dashboard</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        /* משתני צבע לתחלופה חלקה בין יום ללילה */
+        :root {
+            --bg-color: #000000;
+            --text-primary: #00E5FF;
+            --text-secondary: #0088A3;
+            --border-color: #004455;
+            --panel-bg: transparent;
+            --event-time-color: #FFEB3B;
+            --timer-gradient: -webkit-linear-gradient(45deg, #FFEB3B, #00E5FF);
+        }
+
+        body.light-mode {
+            --bg-color: #f5f5f7;
+            --text-primary: #1d1d1f;
+            --text-secondary: #515154;
+            --border-color: #d2d2d7;
+            --panel-bg: #ffffff;
+            --event-time-color: #0066cc;
+            --timer-gradient: -webkit-linear-gradient(45deg, #ff7700, #0066cc);
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-primary); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            text-align: center; 
+            padding-top: 2%; 
+            overflow: hidden; 
+            direction: rtl;
+            transition: background-color 1s ease, color 1s ease;
+            margin: 0;
+        }
+
+        #dashboard-grid {
+            width: 96%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+        .panel {
+            width: 48%;
+            box-sizing: border-box;
+            padding: 20px 25px;
+            background-color: var(--panel-bg);
+            border-radius: 18px;
+            border: 2px dashed var(--border-color);
+            transition: background-color 1s ease, border-color 1s ease;
+        }
+
+        #left-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        #right-panel {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #bottom-panel {
+            clear: both;
+            width: 100%;
+            padding-top: 35px;
+        }
+
+        .section-title { font-size: 26px; color: var(--text-secondary); margin-bottom: 12px; font-weight: bold; }
+        .sub-title { font-size: 20px; color: var(--text-primary); margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;}
+
+        #clock { font-size: 90px; margin-bottom: 0; line-height: 90px; font-family: monospace; font-weight: bold;}
+        #date { font-size: 28px; color: var(--text-secondary); margin-top: 5px; margin-bottom: 30px; font-weight: 500;}
+
+        #temp { font-size: 75px; font-weight: bold; margin-bottom: 10px; font-family: monospace;}
+        #uv-info, #sunset-info { font-size: 24px; color: var(--text-secondary); margin-top: 10px; font-weight: 500;}
+
+        #sunset-icon {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+            margin-left: 8px;
+            stroke: var(--text-secondary);
+        }
+
+        /* עיצוב רשימת האירועים */
+        .event-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 350px;
+        }
+
+        .event-item {
+            font-size: 22px;
+            padding: 8px 0;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .event-time {
+            font-weight: bold;
+            color: var(--event-time-color);
+            width: 80px;
+            flex-shrink: 0;
+            font-family: monospace;
+            font-size: 24px;
+        }
+
+        .event-title {
+            flex-grow: 1;
+            padding-right: 15px;
+            line-height: 1.2;
+        }
+
+        .empty-state {
+            font-size: 20px;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 10px 0;
+        }
+
+        .separator { border-top: 2px dashed var(--border-color); margin: 30px auto 10px auto; width: 95%; transition: border-color 1s ease;}
+
+        #timer { 
+            font-size: 46px; 
+            font-weight: bold; 
+            white-space: nowrap; 
+            background: var(--timer-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            margin-top: 15px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="dashboard-grid">
+        
+        <div id="left-panel" class="panel">
+            <div id="clock">00:00:00</div>
+            <div id="date">--/--/----</div>
+            
+            <div id="temp">--°C</div>
+            <div id="uv-info">טוען מדד קרינה...</div>
+            <div id="sunset-info">טוען נתוני שמש...</div>
+        </div>
+
+        <div id="right-panel" class="panel">
+            <div class="section-title">הלוח המשפחתי 📅</div>
+            
+            <div class="sub-title">היום</div>
+            <ul id="events-today" class="event-list">
+                <div class="empty-state">טוען אירועים...</div>
+            </ul>
+
+            <div class="sub-title">מחר</div>
+            <ul id="events-tomorrow" class="event-list">
+                <div class="empty-state">טוען אירועים...</div>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="separator"></div>
+
+    <div id="bottom-panel">
+        <div class="section-title" style="margin-bottom: 0;">☀️ הספירה לאחור לתחילת החופש הגדול 🌊</div>
+        <div id="timer">טוען...</div>
+    </div>
+
+    <script>
+        // הדבק כאן את כתובת ה-URL שקיבלת מגוגל סקריפט:
+        var googleScriptUrl = "https://script.google.com/macros/s/AKfycbziD0jqPMC5zcgw-2MeP-Gd6ADYzmnAYFsc13yccN6Tny5R0yMJe75oHQVqeMNabOaj/exec";
+
+        var sunIconSvg = '<svg id="sunset-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="2" y1="18" x2="22" y2="18"/><path d="M6 18a6 6 0 0 1 12 0"/><line x1="12" y1="5" x2="12" y2="9"/><line x1="5.22" y1="11.22" x2="7.34" y2="13.34"/><line x1="18.78" y1="11.22" x2="16.66" y2="13.34"/></svg>';
+
+        function updateClock() {
+            var now = new Date();
+            var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+            if (h < 10) h = "0" + h; if (m < 10) m = "0" + m; if (s < 10) s = "0" + s;
+            document.getElementById("clock").innerHTML = h + ":" + m + ":" + s;
+            
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById("date").innerHTML = now.toLocaleDateString("he-IL", options);
+        }
+
+        function updateWeatherAndTheme() {
+            var url = "https://api.open-meteo.com/v1/forecast?latitude=32.01&longitude=34.78&current=temperature_2m,is_day&hourly=uv_index&daily=uv_index_max,sunrise,sunset&timezone=Asia%2FJerusalem";
+            
+            fetch(url).then(function(r){return r.json()}).then(function(data){
+                if (!data || !data.current || !data.hourly || !data.daily) return;
+
+                // עדכון טמפרטורה
+                var tempVal = Math.round(data.current.temperature_2m);
+                var tempEl = document.getElementById("temp");
+                tempEl.innerHTML = tempVal + "°C";
+                
+                // הנדסת צבעי הטמפרטורה
+                var r, g, b;
+                if (tempVal <= 20) {
+                    r = 0; g = 150; b = 255;
+                } else if (tempVal <= 25) {
+                    var p = (tempVal - 20) / 5;
+                    r = Math.round(200 * p);
+                    g = Math.round(150 + (100) * p);
+                    b = Math.round(255 - 200 * p);
+                } else if (tempVal <= 30) {
+                    var p = (tempVal - 25) / 5;
+                    r = 255;
+                    g = Math.round(200 - 100 * p);
+                    b = 0;
+                } else {
+                    r = 255; g = 50; b = 0;
+                }
+                tempEl.style.color = "rgb(" + r + "," + g + "," + b + ")";
+
+                // עדכון קרינה
+                var currentHour = new Date().getHours();
+                var uvCurrent = data.hourly.uv_index[currentHour] !== undefined ? data.hourly.uv_index[currentHour] : "--";
+                var uvMax = data.daily.uv_index_max[0];
+                document.getElementById("uv-info").innerHTML = "קרינה: " + uvCurrent + " (שיא היום: " + uvMax + ")";
+
+                // עדכון מצב יום/לילה ונתוני שמש
+                var isDay = data.current.is_day === 1;
+                document.body.className = isDay ? "light-mode" : "dark-mode";
+
+                var now = new Date();
+                var sunsetRaw = data.daily.sunset[0];
+                var sunsetDate = sunsetRaw ? new Date(sunsetRaw) : null;
+                
+                if (sunsetDate && now < sunsetDate) {
+                    var sunsetTime = sunsetRaw.split("T")[1].substring(0, 5);
+                    document.getElementById("sunset-info").innerHTML = "שקיעה " + sunIconSvg + ": " + sunsetTime;
+                } else {
+                    var sunriseRaw = data.daily.sunrise[1];
+                    var sunriseTime = "--:--";
+                    if (sunriseRaw) {
+                        sunriseTime = sunriseRaw.split("T")[1].substring(0, 5);
+                    }
+                    document.getElementById("sunset-info").innerHTML = "זריחה " + sunIconSvg + ": " + sunriseTime;
+                }
+            }).catch(function(){});
+        }
+
+        function fetchCalendarEvents() {
+            if (!googleScriptUrl || googleScriptUrl === "YOUR_URL_HERE") return;
+            
+            fetch(googleScriptUrl)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                var todayList = document.getElementById("events-today");
+                var tomorrowList = document.getElementById("events-tomorrow");
+                
+                todayList.innerHTML = "";
+                tomorrowList.innerHTML = "";
+                
+                if (data.today && data.today.length > 0) {
+                    data.today.forEach(function(ev) {
+                        todayList.innerHTML += '<li class="event-item"><div class="event-time">' + ev.time + '</div><div class="event-title">' + ev.title + '</div></li>';
+                    });
+                } else {
+                    todayList.innerHTML = '<div class="empty-state">אין אירועים מתוכננים להיום</div>';
+                }
+
+                if (data.tomorrow && data.tomorrow.length > 0) {
+                    data.tomorrow.forEach(function(ev) {
+                        tomorrowList.innerHTML += '<li class="event-item"><div class="event-time">' + ev.time + '</div><div class="event-title">' + ev.title + '</div></li>';
+                    });
+                } else {
+                    tomorrowList.innerHTML = '<div class="empty-state">אין אירועים מתוכננים למחר</div>';
+                }
+            }).catch(function(){});
+        }
+
+        function updateCountdown() {
+            var target = new Date(2026, 6, 1, 0, 0, 0); 
+            var diff = target - new Date();
+            if (diff <= 0) { document.getElementById("timer").innerHTML = "החופש הגדול התחיל!"; return; }
+            var d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+            document.getElementById("timer").innerHTML = d + " ימים " + h + " שעות " + m + " דקות " + s + " שניות ";
+        }
+
+        // טעינה ראשונית וקביעת מרווחי רענון למנועים השונים
+        updateClock(); 
+        updateCountdown(); 
+        updateWeatherAndTheme(); 
+        fetchCalendarEvents();
+
+        setInterval(updateClock, 1000); 
+        setInterval(updateCountdown, 1000); 
+        setInterval(updateWeatherAndTheme, 900000); // בדיקת אקלים ואור כל 15 דקות
+        setInterval(fetchCalendarEvents, 300000); // סנכרון יומן כל 5 דקות
+    </script>
+</body>
+</html>
