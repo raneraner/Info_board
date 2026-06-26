@@ -7,7 +7,7 @@
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    ⁠<meta name="theme-color" id="theme-color-meta" content="#0d0d0f">
+    <meta name="theme-color" id="theme-color-meta" content="#0d0d0f">
     <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
 
     <style>
@@ -63,11 +63,11 @@
             transition: background 1.5s ease, color 1.5s ease;
         }
 
-        /* הגריד המקורי והבטוח */
+        /* הגריד המעודכן עם חלוקת גובה מדויקת */
         #bento-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr) auto;
+            grid-template-rows: 28vh 1fr 22vh;
             gap: 24px;
             height: 100%;
             max-width: 1200px;
@@ -123,16 +123,15 @@
             width: 100%;
         }
 
-        /* תיקון הנדסי: יישור עליון קשיח ומרווח קבוע ליישור פלס */
+        /* תיקון הנדסי: חזרנו למרכוז אוטומטי כדי לשמור על איזון בתיבה הקטנה */
         .top-metric-container {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             width: 100%;
             min-height: 0;
-            padding-top: 16px;
         }
 
         #clock, #temp { 
@@ -225,7 +224,6 @@
             #bento-grid { gap: 16px; }
             .bento-card { padding: 16px 20px; border-radius: 24px; }
             
-            .top-metric-container { padding-top: 8px; }
             #clock, #temp { font-size: 72px; }
             #date { font-size: 20px; }
             
